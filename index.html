@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LibraVault – Library Management System</title>
+  <meta name="description" content="LibraVault is a modern, intuitive library management system for tracking books, members, and borrowing activity with ease." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Background decorative layers -->
+  <div class="bg-grid"></div>
+  <div class="bg-orb-mid"></div>
+
+  <!-- Login Section -->
+  <section class="login-view" id="loginView">
+    <div class="login-container">
+      <div class="login-card">
+        <div class="login-header">
+          <div class="logo">
+            <div class="logo-icon">📚</div>
+            <span class="logo-text">LibraVault</span>
+          </div>
+          <h1 id="authTitle">Welcome to LibraVault</h1>
+          <p id="authSubtitle">Select your role to continue</p>
+        </div>
+
+        <div id="roleSelection" class="role-selection">
+          <div class="role-grid">
+            <button class="role-btn" id="btnStudentRole">
+              <div class="role-icon">🎓</div>
+              <div class="role-name">Student</div>
+            </button>
+            <button class="role-btn" id="btnFacultyRole">
+              <div class="role-icon">👨‍🏫</div>
+              <div class="role-name">Faculty / Staff</div>
+            </button>
+          </div>
+        </div>
+
+        <div id="authContainer" class="hidden">
+          <div class="back-to-roles">
+            <button class="btn-back-role" id="backToRoles">← Change Role</button>
+          </div>
+        
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-target="loginForm">Login</button>
+          <button class="auth-tab" data-target="signupForm">Sign Up</button>
+        </div>
+
+        <div class="login-form" id="loginForm">
+          <div class="form-group">
+            <label for="loginId">Email or Phone Number *</label>
+            <input type="text" id="loginId" class="form-control" placeholder="e.g. admin@libravault.com or 9876543210" />
+            <span class="error-msg" id="loginIdError"></span>
+          </div>
+          <div class="form-group" style="margin-top: 1rem;">
+            <label for="loginPass">Password *</label>
+            <div class="pass-wrapper">
+              <input type="password" id="loginPass" class="form-control" placeholder="••••••••" />
+              <button type="button" class="toggle-pass" onclick="togglePassword('loginPass', this)">👁️</button>
+            </div>
+          </div>
+          <button class="btn-primary login-btn" id="performLogin">Login</button>
+          <div class="forgot-link-wrap">
+            <button type="button" class="forgot-link" id="forgotPasswordLink">🔑 Forgot Password?</button>
+          </div>
+        </div>
+
+        <div class="login-form hidden" id="signupForm">
+          <div class="form-group">
+            <label for="signupName">Full Name *</label>
+            <input type="text" id="signupName" class="form-control" placeholder="e.g. John Doe" />
+          </div>
+          <div class="form-group" style="margin-top: 0.6rem;">
+            <label for="signupId">Email or Phone Number *</label>
+            <input type="text" id="signupId" class="form-control" placeholder="e.g. john@email.com or 9876543210" />
+            <span class="error-msg" id="signupIdError"></span>
+          </div>
+          <div class="form-group" style="margin-top: 0.6rem;">
+            <label for="signupPass">Password *</label>
+            <div class="pass-wrapper">
+              <input type="password" id="signupPass" class="form-control" placeholder="••••••••" />
+              <button type="button" class="toggle-pass" onclick="togglePassword('signupPass', this)">👁️</button>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top: 0.6rem;">
+            <label for="signupConfirmPass">Confirm Password *</label>
+            <div class="pass-wrapper">
+              <input type="password" id="signupConfirmPass" class="form-control" placeholder="••••••••" />
+              <button type="button" class="toggle-pass" onclick="togglePassword('signupConfirmPass', this)">👁️</button>
+            </div>
+            <span class="error-msg" id="signupPassError"></span>
+          </div>
+          <div class="form-group" id="facultyAuthGroup" style="margin-top: 0.6rem; display: none;">
+            <label for="signupFacultyAuth">Faculty Authorization Code *</label>
+            <input type="password" id="signupFacultyAuth" class="form-control" placeholder="Secret Admin Passcode" />
+            <span class="error-msg" id="facultyAuthError"></span>
+          </div>
+          <button class="btn-primary login-btn" style="margin-top: 1.5rem;" id="performSignup">Create Account</button>
+        </div>
+
+        <!-- Forgot Password Panel -->
+        <div class="login-form hidden" id="forgotPanel">
+          <div class="forgot-header">
+            <span class="forgot-icon">🔑</span>
+            <h3>Reset Password</h3>
+            <p>Enter your registered email or phone number to reset your password.</p>
+          </div>
+          <div id="forgotStep1">
+            <div class="form-group">
+              <label for="forgotId">Email or Phone Number *</label>
+              <input type="text" id="forgotId" class="form-control" placeholder="e.g. john@email.com or 9876543210" />
+              <span class="error-msg" id="forgotIdError"></span>
+            </div>
+            <button class="btn-primary login-btn" style="margin-top:1rem;" id="forgotFindBtn">Find Account</button>
+          </div>
+          <div id="forgotStep2" class="hidden">
+            <div class="forgot-found-badge" id="forgotFoundBadge"></div>
+            <div class="form-group" style="margin-top:1rem;">
+              <label for="forgotNewPass">New Password *</label>
+              <div class="pass-wrapper">
+                <input type="password" id="forgotNewPass" class="form-control" placeholder="Min. 6 characters" />
+                <button type="button" class="toggle-pass" onclick="togglePassword('forgotNewPass', this)">👁️</button>
+              </div>
+            </div>
+            <div class="form-group" style="margin-top:0.75rem;">
+              <label for="forgotConfirmPass">Confirm New Password *</label>
+              <div class="pass-wrapper">
+                <input type="password" id="forgotConfirmPass" class="form-control" placeholder="Repeat new password" />
+                <button type="button" class="toggle-pass" onclick="togglePassword('forgotConfirmPass', this)">👁️</button>
+              </div>
+              <span class="error-msg" id="forgotPassError"></span>
+            </div>
+            <button class="btn-primary login-btn" style="margin-top:1rem;" id="forgotResetBtn">Reset Password</button>
+          </div>
+          <button type="button" class="btn-back-forgot" id="backToLoginFromForgot">← Back to Login</button>
+        </div>
+
+        <p class="login-footer">Protected by LibraVault Encryption</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">
+        <div class="logo-icon">📚</div>
+        <span class="logo-text">LibraVault</span>
+      </div>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar">✕</button>
+    </div>
+
+    <div class="sidebar-user" id="sidebarUser">
+      <div class="user-info">
+        <div class="user-avatar" id="sidebarUserAvatar">L</div>
+        <div class="user-details">
+          <span class="user-name" id="sidebarUserName">Librarian</span>
+          <span class="user-role" id="sidebarUserRole">Administrator</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-page="dashboard" id="nav-dashboard">
+        <span class="nav-icon">🏠</span>
+        <span>Dashboard</span>
+      </a>
+      <a href="#" class="nav-item" data-page="books" id="nav-books">
+        <span class="nav-icon">📖</span>
+        <span>Books</span>
+      </a>
+      <a href="#" class="nav-item" data-page="members" id="nav-members">
+        <span class="nav-icon">👥</span>
+        <span>Members</span>
+      </a>
+      <a href="#" class="nav-item" data-page="borrow" id="nav-borrow">
+        <span class="nav-icon">🔄</span>
+        <span>Borrowing</span>
+      </a>
+      <a href="#" class="nav-item" data-page="returns" id="nav-returns">
+        <span class="nav-icon">↩️</span>
+        <span>Returns</span>
+      </a>
+      <a href="#" class="nav-item" data-page="reports" id="nav-reports">
+        <span class="nav-icon">📊</span>
+        <span>Reports</span>
+      </a>
+      <a href="#" class="nav-item" id="logoutBtn">
+        <span class="nav-icon">🚪</span>
+        <span>Logout</span>
+      </a>
+    </nav>
+
+  </aside>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Main Content -->
+  <main class="main-content" id="mainContent">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+        <div class="page-title" id="pageTitle">Dashboard</div>
+      </div>
+      <div class="topbar-right">
+
+        <button class="notif-btn" aria-label="Notifications">
+          🔔
+          <span class="notif-badge" id="notifBadge">0</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Pages -->
+    <div class="page" id="page-dashboard">
+      <div class="welcome-banner">
+        <div class="welcome-text">
+          <h1 id="welcomeName">Welcome back, Librarian! 👋</h1>
+          <p>Here's what's happening in your library today.</p>
+        </div>
+        <div class="welcome-art">📚</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card" id="stat-totalBooks">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">📖</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statTotalBooks">0</div>
+            <div class="stat-label">Total Books</div>
+          </div>
+          <div class="stat-badge available">Library</div>
+        </div>
+        <div class="stat-card" id="stat-available">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">✅</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statAvailable">0</div>
+            <div class="stat-label">Available</div>
+          </div>
+          <div class="stat-badge available">In Stock</div>
+        </div>
+        <div class="stat-card" id="stat-borrowed">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">📤</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statBorrowed">0</div>
+            <div class="stat-label">Borrowed</div>
+          </div>
+          <div class="stat-badge borrowed">Active</div>
+        </div>
+        <div class="stat-card" id="stat-members">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #ec4899, #db2777);">👥</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statMembers">0</div>
+            <div class="stat-label">Members</div>
+          </div>
+          <div class="stat-badge members">Registered</div>
+        </div>
+        <div class="stat-card" id="stat-overdue">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">⚠️</div>
+          <div class="stat-info">
+            <div class="stat-value" id="statOverdue">0</div>
+            <div class="stat-label">Overdue</div>
+          </div>
+          <div class="stat-badge overdue">Alert</div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid" id="dashboardGrid">
+        <div class="card recent-activity" id="recentActivityCard">
+          <div class="card-header">
+            <h2>Recent Activity</h2>
+            <span class="badge-count" id="activityCount">0 entries</span>
+          </div>
+          <div class="activity-list" id="activityList">
+            <div class="empty-state">
+              <span>📋</span>
+              <p>No recent activity yet.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card overdue-panel">
+          <div class="card-header">
+            <h2>Overdue Books</h2>
+            <span class="badge-count alert" id="overdueCount">0</span>
+          </div>
+          <div class="overdue-list" id="overdueList">
+            <div class="empty-state">
+              <span>🎉</span>
+              <p>No overdue books!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card genre-chart-card">
+        <div class="card-header">
+          <h2>Genre Distribution</h2>
+        </div>
+        <div class="genre-bars" id="genreBars">
+          <div class="empty-state">
+            <span>📊</span>
+            <p>Add books to see genre distribution.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Books Page -->
+    <div class="page hidden" id="page-books">
+      <div class="page-header">
+        <h1>Book Catalog</h1>
+        <button class="btn-primary" id="addBookBtn">+ Add Book</button>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" placeholder="Search by title, author, ISBN..." id="bookSearch" class="filter-input" />
+        <select id="genreFilter" class="filter-select">
+          <option value="">All Genres</option>
+          <option value="Fiction">Fiction</option>
+          <option value="Non-Fiction">Non-Fiction</option>
+          <option value="Science">Science</option>
+          <option value="History">History</option>
+          <option value="Biography">Biography</option>
+          <option value="Technology">Technology</option>
+          <option value="Romance">Romance</option>
+          <option value="Mystery">Mystery</option>
+          <option value="Fantasy">Fantasy</option>
+          <option value="Philosophy">Philosophy</option>
+        </select>
+        <select id="statusFilter" class="filter-select">
+          <option value="">All Status</option>
+          <option value="available">Available</option>
+          <option value="borrowed">Borrowed</option>
+        </select>
+      </div>
+
+      <div class="books-grid" id="booksGrid">
+        <div class="empty-state full-width">
+          <span>📚</span>
+          <p>No books in the catalog yet. Add your first book!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Members Page -->
+    <div class="page hidden" id="page-members">
+      <div class="page-header">
+        <h1>Members</h1>
+        <button class="btn-primary" id="addMemberBtn">+ Add Member</button>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" placeholder="Search by name, email, ID..." id="memberSearch" class="filter-input" />
+        <select id="memberTypeFilter" class="filter-select">
+          <option value="">All Members</option>
+          <option value="Student">Students</option>
+          <option value="Faculty">Faculty & Staff</option>
+        </select>
+      </div>
+
+      <div class="members-grid" id="membersGrid">
+        <div class="empty-state full-width">
+          <span>👥</span>
+          <p>No members registered yet. Add your first member!</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Borrow Page -->
+    <div class="page hidden" id="page-borrow">
+      <div class="page-header">
+        <h1>Issue Book</h1>
+      </div>
+
+      <div class="borrow-form-card card" id="issueBookCard">
+        <h2>Borrow a Book</h2>
+        <p class="form-desc">Select a member and a book to issue a new borrowing.</p>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="borrowMember">Member ID or Phone Number</label>
+            <input type="text" id="borrowMember" class="form-control" autocomplete="new-password" placeholder="Enter Member ID or Phone Number..." />
+          </div>
+          <div class="form-group">
+            <label for="borrowBook">Book</label>
+            <select id="borrowBook" class="form-control">
+              <option value="">Select Available Book...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="borrowDueDate">Due Date</label>
+            <input type="date" id="borrowDueDate" class="form-control" />
+          </div>
+        </div>
+        <button class="btn-primary" id="issueBorrowBtn">Issue Book</button>
+      </div>
+
+      <div class="card" style="margin-top: 2rem;" id="activeBorrowsCard">
+        <div class="card-header">
+          <h2>Active Borrows</h2>
+          <span class="badge-count" id="activeBorrowsCount">0</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table" id="activeBorrowsTable">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Book</th>
+                <th>Issued Date</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="activeBorrowsBody">
+              <tr><td colspan="6" class="table-empty">No active borrows.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Returns Page -->
+    <div class="page hidden" id="page-returns">
+      <div class="page-header">
+        <h1>Return Books</h1>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Pending Returns</h2>
+          <span class="badge-count" id="pendingReturnsCount">0</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Book</th>
+                <th>Due Date</th>
+                <th>Days Overdue</th>
+                <th>Fine (₹)</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="returnsBody">
+              <tr><td colspan="6" class="table-empty">No pending returns.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top: 2rem;">
+        <div class="card-header">
+          <h2>Return History</h2>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Book</th>
+                <th>Returned On</th>
+                <th>Fine Paid (₹)</th>
+              </tr>
+            </thead>
+            <tbody id="returnHistoryBody">
+              <tr><td colspan="4" class="table-empty">No return history.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports Page -->
+    <div class="page hidden" id="page-reports">
+      <div class="page-header">
+        <h1>Reports & Analytics</h1>
+      </div>
+
+      <div class="stats-grid" id="reportStats">
+        <div class="stat-card">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">📈</div>
+          <div class="stat-info">
+            <div class="stat-value" id="repTotalIssued">0</div>
+            <div class="stat-label">Total Issued</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #059669);">✅</div>
+          <div class="stat-info">
+            <div class="stat-value" id="repTotalReturned">0</div>
+            <div class="stat-label">Total Returned</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626);">⚠️</div>
+          <div class="stat-info">
+            <div class="stat-value" id="repTotalOverdue">0</div>
+            <div class="stat-label">Total Overdue</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">💰</div>
+          <div class="stat-info">
+            <div class="stat-value" id="repTotalFines">₹0</div>
+            <div class="stat-label">Fines Collected</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid" style="margin-top: 1.5rem;">
+        <div class="card">
+          <div class="card-header"><h2>Most Borrowed Books</h2></div>
+          <div id="mostBorrowedList" class="activity-list">
+            <div class="empty-state"><span>📊</span><p>No data yet.</p></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header"><h2>Most Active Members</h2></div>
+          <div id="mostActiveMembersList" class="activity-list">
+            <div class="empty-state"><span>👤</span><p>No data yet.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Modal Backdrop -->
+  <div class="modal-backdrop hidden" id="modalBackdrop"></div>
+
+  <!-- Add Book Modal -->
+  <div class="modal hidden" id="addBookModal" role="dialog" aria-modal="true" aria-labelledby="addBookModalTitle">
+    <div class="modal-header">
+      <h2 id="addBookModalTitle">Add New Book</h2>
+      <button class="modal-close" id="closeAddBookModal" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full">
+          <label for="bookTitle">Title *</label>
+          <input type="text" id="bookTitle" class="form-control" placeholder="e.g. The Great Gatsby" />
+        </div>
+        <div class="form-group">
+          <label for="bookAuthor">Author *</label>
+          <input type="text" id="bookAuthor" class="form-control" placeholder="e.g. F. Scott Fitzgerald" />
+        </div>
+        <div class="form-group">
+          <label for="bookISBN">ISBN</label>
+          <input type="text" id="bookISBN" class="form-control" placeholder="e.g. 978-3-16-148410-0" />
+        </div>
+        <div class="form-group">
+          <label for="bookGenre">Genre *</label>
+          <select id="bookGenre" class="form-control">
+            <option value="">Select Genre</option>
+            <option value="Fiction">Fiction</option>
+            <option value="Non-Fiction">Non-Fiction</option>
+            <option value="Science">Science</option>
+            <option value="History">History</option>
+            <option value="Biography">Biography</option>
+            <option value="Technology">Technology</option>
+            <option value="Romance">Romance</option>
+            <option value="Mystery">Mystery</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Philosophy">Philosophy</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="bookYear">Publication Year</label>
+          <input type="number" id="bookYear" class="form-control" placeholder="e.g. 2023" min="1000" max="2099" />
+        </div>
+        <div class="form-group">
+          <label for="bookCopies">Total Copies *</label>
+          <input type="number" id="bookCopies" class="form-control" placeholder="e.g. 3" min="1" value="1" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" id="cancelAddBook">Cancel</button>
+      <button class="btn-primary" id="saveBook">Save Book</button>
+    </div>
+  </div>
+
+  <!-- Edit Book Modal -->
+  <div class="modal hidden" id="editBookModal" role="dialog" aria-modal="true" aria-labelledby="editBookModalTitle">
+    <div class="modal-header">
+      <h2 id="editBookModalTitle">Edit Book</h2>
+      <button class="modal-close" id="closeEditBookModal" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editBookId" />
+      <div class="form-grid">
+        <div class="form-group full">
+          <label for="editBookTitle">Title *</label>
+          <input type="text" id="editBookTitle" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="editBookAuthor">Author *</label>
+          <input type="text" id="editBookAuthor" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="editBookISBN">ISBN</label>
+          <input type="text" id="editBookISBN" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="editBookGenre">Genre *</label>
+          <select id="editBookGenre" class="form-control">
+            <option value="">Select Genre</option>
+            <option value="Fiction">Fiction</option>
+            <option value="Non-Fiction">Non-Fiction</option>
+            <option value="Science">Science</option>
+            <option value="History">History</option>
+            <option value="Biography">Biography</option>
+            <option value="Technology">Technology</option>
+            <option value="Romance">Romance</option>
+            <option value="Mystery">Mystery</option>
+            <option value="Fantasy">Fantasy</option>
+            <option value="Philosophy">Philosophy</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editBookYear">Publication Year</label>
+          <input type="number" id="editBookYear" class="form-control" min="1000" max="2099" />
+        </div>
+        <div class="form-group">
+          <label for="editBookCopies">Total Copies *</label>
+          <input type="number" id="editBookCopies" class="form-control" min="1" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" id="cancelEditBook">Cancel</button>
+      <button class="btn-primary" id="updateBook">Update Book</button>
+    </div>
+  </div>
+
+  <!-- Add Member Modal -->
+  <div class="modal hidden" id="addMemberModal" role="dialog" aria-modal="true" aria-labelledby="addMemberModalTitle">
+    <div class="modal-header">
+      <h2 id="addMemberModalTitle">Add New Member</h2>
+      <button class="modal-close" id="closeAddMemberModal" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="memberName">Full Name *</label>
+          <input type="text" id="memberName" class="form-control" placeholder="e.g. John Doe" />
+        </div>
+        <div class="form-group">
+          <label for="memberEmail">Email *</label>
+          <input type="email" id="memberEmail" class="form-control" placeholder="e.g. john@email.com" />
+        </div>
+        <div class="form-group">
+          <label for="memberPhone">Phone</label>
+          <input type="tel" id="memberPhone" class="form-control" placeholder="e.g. +91 98765 43210" />
+        </div>
+        <div class="form-group">
+          <label for="memberType">Member Type</label>
+          <select id="memberType" class="form-control">
+            <option value="Student">Student</option>
+            <option value="Faculty">Faculty</option>
+            <option value="Staff">Staff</option>
+            <option value="Public">Public</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label for="memberAddress">Address</label>
+          <textarea id="memberAddress" class="form-control" rows="2" placeholder="Full address..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" id="cancelAddMember">Cancel</button>
+      <button class="btn-primary" id="saveMember">Register Member</button>
+    </div>
+  </div>
+
+  <!-- Edit Member Modal -->
+  <div class="modal hidden" id="editMemberModal" role="dialog" aria-modal="true" aria-labelledby="editMemberModalTitle">
+    <div class="modal-header">
+      <h2 id="editMemberModalTitle">Edit Member</h2>
+      <button class="modal-close" id="closeEditMemberModal" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editMemberId" />
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="editMemberName">Full Name *</label>
+          <input type="text" id="editMemberName" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="editMemberEmail">Email *</label>
+          <input type="email" id="editMemberEmail" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="editMemberPhone">Phone</label>
+          <input type="tel" id="editMemberPhone" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label for="editMemberType">Member Type</label>
+          <select id="editMemberType" class="form-control">
+            <option value="Student">Student</option>
+            <option value="Faculty">Faculty</option>
+            <option value="Staff">Staff</option>
+            <option value="Public">Public</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="editMemberStatus">Status</label>
+          <select id="editMemberStatus" class="form-control">
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label for="editMemberAddress">Address</label>
+          <textarea id="editMemberAddress" class="form-control" rows="2"></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" id="cancelEditMember">Cancel</button>
+      <button class="btn-primary" id="updateMember">Update Member</button>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Confirm Dialog -->
+  <div class="confirm-dialog hidden" id="confirmDialog">
+    <div class="confirm-content">
+      <div class="confirm-icon">⚠️</div>
+      <h3 id="confirmTitle">Are you sure?</h3>
+      <p id="confirmMessage">This action cannot be undone.</p>
+      <div class="confirm-actions">
+        <button class="btn-secondary" id="confirmCancel">Cancel</button>
+        <button class="btn-danger" id="confirmOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
